@@ -137,11 +137,9 @@ def get_stats(identifier):
         'name': latest_name,
         'aliases': aliases,
         'uid': player_id,
-        'total': {
-            'kills': kills,
-            'deaths': deaths,
-            'kd': kd
-        }
+        'kills': kills,
+        'deaths': deaths,
+        'kd': kd
     }
     if server:
         resp['server_id'] = server
@@ -268,7 +266,7 @@ def webui():
                     <b>${j.name}</b> (UID: ${j.uid})<br>
                     ${j.aliases && j.aliases.length ? `<div>Aliases: ${j.aliases.join(', ')}</div>` : ''}
                     <div class="kdp">
-                     Kills: ${j.total.kills} | Deaths: ${j.total.deaths} | Kd: ${j.total.kd.toFixed(2)}
+                     Kills: ${j.kills} | Deaths: ${j.deaths} | Kd: ${j.kd.toFixed(2)}
                      ${j.server_id ? `<br>Server: <code>${j.server_id}</code>` : ""}
                  </div>
              </div>`;
