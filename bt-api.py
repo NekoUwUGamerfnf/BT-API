@@ -390,13 +390,13 @@ def webui():
             const ul = document.getElementById('servers');
             ul.innerHTML = '<li>Loading...</li>';
             try {
-                const resp = await fetch('/server_ids');
+                const resp = await fetch('/server');
                 if (!resp.ok) throw new Error();
                 const data = await resp.json();
-                if (data.server_ids.length === 0) {
+                if (data.servers.length === 0) {
                     ul.innerHTML = '<li><i>No Servers</i></li>';
                 } else {
-                    ul.innerHTML = data.server_ids
+                    ul.innerHTML = data.servers
                         .map(id => `<li><code>${id}</code></li>`)
                         .join('');
                 }
@@ -430,14 +430,14 @@ def webui():
     """
     return render_template_string(html)
 
-@app.route('/server_ids', methods=['GET'])
-def server_ids():
+@app.route('/server', methods=['GET'])
+def servers():
     conn = get_db_conn()
     cur = conn.cursor()
     cur.execute('SELECT DISTINCT server_id FROM servers')
     ids = [r['server_id'] for r in cur.fetchall()]
     conn.close()
-    return jsonify({'server_ids': ids}), 200
+    return jsonify({'servers': ids}), 200
 
 if __name__ == '__main__':
     serve(app, host='0.0.0.0', port=7274)
