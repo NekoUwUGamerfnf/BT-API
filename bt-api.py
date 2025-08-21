@@ -390,7 +390,7 @@ def webui():
             const ul = document.getElementById('servers');
             ul.innerHTML = '<li>Loading...</li>';
             try {
-                const resp = await fetch('/server');
+                const resp = await fetch('/servers');
                 if (!resp.ok) throw new Error();
                 const data = await resp.json();
                 if (data.servers.length === 0) {
@@ -430,7 +430,7 @@ def webui():
     """
     return render_template_string(html)
 
-@app.route('/server', methods=['GET'])
+@app.route('/servers', methods=['GET'])
 def servers():
     conn = get_db_conn()
     cur = conn.cursor()
