@@ -36,14 +36,18 @@ def store_kill(values):
             return
     attacker_id = str(values['attacker_id']).strip()
     victim_id = str(values['victim_id']).strip()
+    if attacker_id == "":
+        attacker_id = str(values['attacker_uid']).strip()
+    if victim_id == "":
+        victim_id = str(values['victim_uid']).strip()
     attacker_name = str(values['attacker_name']).strip()
     victim_name = str(values['victim_name']).strip()
     current_time = time.time()
     server_id = values.get('server_id')
     if server_id:
         server_id = str(server_id).strip()
-        if not server_id:
-            server_id = None
+        if not server_id or len(server_id) > 30:
+            return
     conn = get_db_conn()
     cur = conn.cursor()
     cur.execute('INSERT OR IGNORE INTO user_stats (player_id, player_name, kills, deaths) VALUES (?, ?, 0, 0)', (attacker_id, attacker_name))
@@ -145,13 +149,6 @@ def get_stats(identifier):
         resp['server_id'] = server
     conn.close()
     return jsonify(resp), 200
-
-@app.route('/auth', methods=['POST'])
-def auth():
-    token = request.headers.get('Token')
-    if token in valid_tokens or FAKE_GOOD_CODE_FOR_ALL_TOKENS:
-        return jsonify({'status': 'authorized'}), 200
-    return jsonify({'error': 'unauthorized'}), 401
 
 @app.route('/top', methods=['GET'])
 def top_players():
