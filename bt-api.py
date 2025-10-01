@@ -4,6 +4,8 @@ from flask import Flask, request, jsonify, render_template_string, Response
 import requests
 import time
 from waitress import serve
+import re
+import json
 
 app = Flask(__name__)
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -13,11 +15,9 @@ FAKE_GOOD_CODE_FOR_ALL_TOKENS = True
 
 if not os.path.exists(TOKENS_PATH):
     with open(TOKENS_PATH, 'w') as f:
-        import json
         json.dump([], f)
 
 with open(TOKENS_PATH) as f:
-    import json
     valid_tokens = json.load(f)
 
 def get_db_conn():
@@ -36,12 +36,14 @@ def store_kill(values):
             return
     attacker_id = str(values['attacker_id']).strip()
     victim_id = str(values['victim_id']).strip()
-    if attacker_id == "":
+    if attacker_id == None:
         attacker_id = str(values['attacker_uid']).strip()
-    if victim_id == "":
+    if victim_id == None:
         victim_id = str(values['victim_uid']).strip()
-    attacker_name = str(values['attacker_name']).strip()
-    victim_name = str(values['victim_name']).strip()
+    attacker_name = re.sub(r'\(\d*\)', '', str(values['attacker_name']).strip()).strip()
+    victim_name = re.sub(r'\(\d*\)', '', str(values['victim_name']).strip()).strip()
+    if attacker_name == None or attacker_id == None or victim_name == None or victim_id == None:
+        return
     current_time = time.time()
     server_id = values.get('server_id')
     if server_id:
